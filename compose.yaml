@@ -1,0 +1,27 @@
+services:
+  postgres-db:
+    image: docker.io/library/postgres:16-alpine
+    container_name: database_server
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: mymyapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  web-app:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: web_application
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgres://postgres:mysecretpassword@postgres-db:5432/mymapp"
+    depends_on:
+      - postgres-db
+
+volumes:
+  pgdata:
